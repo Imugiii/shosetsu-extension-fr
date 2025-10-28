@@ -1,0 +1,31 @@
+# Shosetsu Development Files
+*.jar
+dev/
+build/
+.gradle/
+
+# IDE - VSCode / Cursor
+.vscode/
+.cursor/
+*.code-workspace
+.history/
+*.swp
+*.swo
+*~
+
+# Cursor specific
+.cursorrules
+.cursorignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log

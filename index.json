@@ -1,0 +1,48 @@
+{
+    "name": "Extensions Light Novels Français",
+    "description": "Extensions pour lire des light novels traduits en français",
+    "version": "1.0.0",
+    "author": "Imugiii",
+    "url": "https://github.com/Imugiii/shosetsu-extension-fr",
+    "libraries": [],
+    "scripts": [
+      {
+        "name": "Chireads",
+        "fileName": "Chireads",
+        "imageURL": "https://www.chireads.com/wp-content/uploads/2020/05/cropped-logo-chireads-192x192.png",
+        "id": 10001,
+        "lang": "fr",
+        "version": "1.0.0",
+        "md5": ""
+      },
+      {
+        "name": "J-Garden",
+        "fileName": "JGarden",
+        "imageURL": "https://j-garden.fr/wp-content/uploads/2021/01/cropped-logo-jg-32x32.png",
+        "id": 10002,
+        "lang": "fr",
+        "version": "1.0.0",
+        "md5": ""
+      },
+      {
+        "name": "Baka-Tsuki FR",
+        "fileName": "BakaTsukiFR",
+        "imageURL": "https://www.baka-tsuki.org/project/logo.png",
+        "id": 10003,
+        "lang": "fr",
+        "version": "1.0.0",
+        "md5": ""
+      },
+      {
+        "name": "Novel de Glace",
+        "fileName": "NovelDeGlace",
+        "imageURL": "https://noveldeglace.com/favicon.ico",
+        "id": 10004,
+        "lang": "fr",
+        "version": "1.0.0",
+        "md5": ""
+      }
+    ],
+    "styles": []
+  }
+  
