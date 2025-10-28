@@ -14,7 +14,9 @@ local settings = {
 }
 
 local function shrinkURL(url, type)
-    return url:gsub("^.-noveldeglace%.com", "")
+    if not url then return "" end
+    url = url:gsub("^https?://[^/]*noveldeglace%.com", "")
+    return url ~= "" and url or "/"
 end
 
 local function expandURL(url, type)
@@ -139,9 +141,21 @@ end
 local function getPassage(chapterURL)
     local url = expandURL(chapterURL, KEY_CHAPTER_URL)
     local doc = GETDocument(url)
+    
+    -- Essayer plusieurs sélecteurs possibles
     local contentElement = doc:selectFirst(".entry-content")
+    if not contentElement then
+        contentElement = doc:selectFirst(".post-content")
+    end
+    if not contentElement then
+        contentElement = doc:selectFirst("article .entry-content")
+    end
+    if not contentElement then
+        contentElement = doc:selectFirst("main .entry-content")
+    end
     
     if contentElement then
+        -- Nettoyer le contenu si nécessaire
         return contentElement:html()
     end
     

@@ -14,17 +14,32 @@ local settings = {
 }
 
 local function shrinkURL(url, type)
-    return url:gsub("^.-baka%-tsuki%.org", "")
+    if not url then return "" end
+    -- Enlever le protocole et le domaine
+    url = url:gsub("^https?://[^/]*baka%-tsuki%.org", "")
+    -- Si c'est vide, retourner au moins /
+    return url ~= "" and url or "/project/index.php?title=Accueil"
 end
 
 local function expandURL(url, type)
+    if not url then return BASE_URL end
+    -- Si c'est déjà une URL complète, la retourner telle quelle
+    if url:find("^https?://") then
+        return url
+    end
+    -- Si ça commence par /, c'est un chemin absolu
     if url:sub(1, 1) == "/" then
         return BASE_URL .. url
-    elseif url:find("^https?://") then
-        return url
-    else
-        return BASE_URL .. "/project/index.php" .. url
     end
+    -- Sinon, c'est probablement un titre MediaWiki, ajouter le chemin
+    if url:find("title=") or url:find("^[^/]") then
+        if not url:find("/project/index.php") then
+            return BASE_URL .. "/project/index.php" .. (url:sub(1, 1) == "?" and "" or "?title=") .. url
+        else
+            return BASE_URL .. url
+        end
+    end
+    return BASE_URL .. "/project/index.php?title=" .. url
 end
 
 local function listings(data)
@@ -33,17 +48,26 @@ local function listings(data)
     local doc = GETDocument(url)
     local novels = {}
     
+    -- Essayer différents sélecteurs possibles
     local items = doc:select("#mw-pages .mw-content-ltr li a")
+    if items:size() == 0 then
+        items = doc:select("#mw-pages li a")
+    end
+    if items:size() == 0 then
+        items = doc:select(".mw-category-group li a")
+    end
     
     for i = 0, items:size() - 1 do
         local link = items:get(i)
         local title = link:text()
         local href = link:attr("href")
         
-        local novel = Novel()
-        novel:setTitle(title)
-        novel:setLink(shrinkURL(href, KEY_NOVEL_URL))
-        novels[#novels + 1] = novel
+        if href and title and title ~= "" then
+            local novel = Novel()
+            novel:setTitle(title)
+            novel:setLink(shrinkURL(href, KEY_NOVEL_URL))
+            novels[#novels + 1] = novel
+        end
     end
     
     return novels
@@ -57,6 +81,12 @@ local function search(data)
     local novels = {}
     
     local items = doc:select("#mw-pages .mw-content-ltr li a")
+    if items:size() == 0 then
+        items = doc:select("#mw-pages li a")
+    end
+    if items:size() == 0 then
+        items = doc:select(".mw-category-group li a")
+    end
     
     for i = 0, items:size() - 1 do
         local link = items:get(i)
@@ -64,10 +94,12 @@ local function search(data)
         
         if query == "" or title:lower():find(query:lower()) then
             local href = link:attr("href")
-            local novel = Novel()
-            novel:setTitle(title)
-            novel:setLink(shrinkURL(href, KEY_NOVEL_URL))
-            novels[#novels + 1] = novel
+            if href and title and title ~= "" then
+                local novel = Novel()
+                novel:setTitle(title)
+                novel:setLink(shrinkURL(href, KEY_NOVEL_URL))
+                novels[#novels + 1] = novel
+            end
         end
     end
     

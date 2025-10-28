@@ -14,7 +14,9 @@ local settings = {
 }
 
 local function shrinkURL(url, type)
-    return url:gsub("^.-chireads%.com", "")
+    if not url then return "" end
+    url = url:gsub("^https?://[^/]*chireads%.com", "")
+    return url ~= "" and url or "/"
 end
 
 local function expandURL(url, type)
