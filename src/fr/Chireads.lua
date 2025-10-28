@@ -173,7 +173,7 @@ return {
     lang = settings.lang,
     isSearchIncrementing = settings.isSearchIncrementing,
     chapterType = settings.chapterType,
-    listings = listings,
+    listings = {listings},
     getSearch = getSearch,
     parseNovel = parseNovel,
     getChapters = getChapters,
