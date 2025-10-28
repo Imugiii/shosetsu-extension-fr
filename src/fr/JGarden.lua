@@ -66,7 +66,7 @@ local function parseNovel(url)
     return novel
 end
 
-local function getPassage(url)
+local function getChapters(url)
     local doc = GETDocument(url)
     local chapters = {}
     
@@ -109,6 +109,6 @@ return {
     chapterType = settings.chapterType,
     getSearch = getSearch,
     parseNovel = parseNovel,
-    getPassage = getPassage,
+    getChapters = getChapters,
     getPassageData = getPassageData
 }

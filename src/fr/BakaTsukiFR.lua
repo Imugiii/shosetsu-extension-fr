@@ -29,7 +29,12 @@ local function getSearch(data)
         if query == "" or title:lower():find(query:lower()) then
             local novel = Novel()
             novel:setTitle(title)
-            novel:setLink(BASE_URL .. "/project/index.php" .. link:attr("href"))
+            local href = link:attr("href")
+            if href:sub(1, 1) == "/" then
+                novel:setLink(BASE_URL .. href)
+            else
+                novel:setLink(BASE_URL .. "/project/index.php" .. href)
+            end
             novels[#novels + 1] = novel
         end
     end
@@ -49,14 +54,23 @@ local function parseNovel(url)
     
     local imageElement = doc:selectFirst(".infobox img")
     if imageElement then
-        novel:setImageURL("https:" .. imageElement:attr("src"))
+        local imgSrc = imageElement:attr("src")
+        if imgSrc:sub(1, 2) == "//" then
+            novel:setImageURL("https:" .. imgSrc)
+        elseif imgSrc:sub(1, 1) == "/" then
+            novel:setImageURL("https:" .. imgSrc)
+        elseif not imgSrc:find("^https?://") then
+            novel:setImageURL(BASE_URL .. imgSrc)
+        else
+            novel:setImageURL(imgSrc)
+        end
     end
     
     novel:setStatus(NovelStatus.PUBLISHING)
     return novel
 end
 
-local function getPassage(url)
+local function getChapters(url)
     local doc = GETDocument(url)
     local chapters = {}
     
@@ -73,7 +87,12 @@ local function getPassage(url)
                 local link = links:get(j)
                 local chapter = NovelChapter()
                 chapter:setTitle(link:text())
-                chapter:setLink(BASE_URL .. "/project/index.php" .. link:attr("href"))
+                local href = link:attr("href")
+                if href:sub(1, 1) == "/" then
+                    chapter:setLink(BASE_URL .. href)
+                else
+                    chapter:setLink(BASE_URL .. "/project/index.php" .. href)
+                end
                 chapter:setOrder(#chapters)
                 chapters[#chapters + 1] = chapter
             end
@@ -109,6 +128,6 @@ return {
     chapterType = settings.chapterType,
     getSearch = getSearch,
     parseNovel = parseNovel,
-    getPassage = getPassage,
+    getChapters = getChapters,
     getPassageData = getPassageData
 }
