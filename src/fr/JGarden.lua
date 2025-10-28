@@ -9,7 +9,7 @@ local settings = {
     imageURL = "https://j-garden.fr/wp-content/uploads/2021/01/cropped-logo-jg-32x32.png",
     id = 10002,
     lang = "fr",
-    isSearchIncrementing = false,
+    isSearchIncrementing = true,
     chapterType = ChapterType.HTML
 }
 

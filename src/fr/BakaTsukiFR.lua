@@ -9,7 +9,7 @@ local settings = {
     imageURL = "https://www.baka-tsuki.org/project/logo.png",
     id = 10003,
     lang = "fr",
-    isSearchIncrementing = false,
+    isSearchIncrementing = true,
     chapterType = ChapterType.HTML
 }
 

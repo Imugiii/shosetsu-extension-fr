@@ -9,7 +9,7 @@ local settings = {
     imageURL = "https://noveldeglace.com/favicon.ico",
     id = 10004,
     lang = "fr",
-    isSearchIncrementing = false,
+    isSearchIncrementing = true,
     chapterType = ChapterType.HTML
 }
 
