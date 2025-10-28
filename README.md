@@ -16,7 +16,7 @@ Dépôt d'extensions Shosetsu pour lire des **light novels** traduits en frança
 1. Ouvrez **Shosetsu**
 2. **Paramètres** → **Extensions** → **Repositories**
 3. Cliquez sur **+**
-4. Entrez : https://raw.githubusercontent.com/Imugiii/shosetsu-extension-fr/main/index.json
+4. Entrez : https://raw.githubusercontent.com/Imugiii/shosetsu-extension-fr/refs/heads/main/index.json
 
 
 ## 📖 Utilisation
