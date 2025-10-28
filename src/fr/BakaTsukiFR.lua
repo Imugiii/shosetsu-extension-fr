@@ -13,6 +13,32 @@ local settings = {
     chapterType = ChapterType.HTML
 }
 
+local function listings(data)
+    local url = BASE_URL .. "/project/index.php?title=Catégorie:Français"
+    
+    local doc = GETDocument(url)
+    local novels = {}
+    
+    local items = doc:select("#mw-pages .mw-content-ltr li a")
+    
+    for i = 0, items:size() - 1 do
+        local link = items:get(i)
+        local title = link:text()
+        
+        local novel = Novel()
+        novel:setTitle(title)
+        local href = link:attr("href")
+        if href:sub(1, 1) == "/" then
+            novel:setLink(BASE_URL .. href)
+        else
+            novel:setLink(BASE_URL .. "/project/index.php" .. href)
+        end
+        novels[#novels + 1] = novel
+    end
+    
+    return novels
+end
+
 local function getSearch(data)
     local query = data[QUERY] or ""
     local url = BASE_URL .. "/project/index.php?title=Catégorie:Français"
@@ -102,7 +128,7 @@ local function getChapters(url)
     return chapters
 end
 
-local function getPassageData(chapterURL)
+local function getPassage(chapterURL)
     local doc = GETDocument(chapterURL)
     local contentElement = doc:selectFirst("#mw-content-text")
     
@@ -118,6 +144,10 @@ local function getPassageData(chapterURL)
     return ""
 end
 
+local function getPassageData(chapterURL)
+    return getPassage(chapterURL)
+end
+
 return {
     id = settings.id,
     name = settings.name,
@@ -126,8 +156,10 @@ return {
     lang = settings.lang,
     isSearchIncrementing = settings.isSearchIncrementing,
     chapterType = settings.chapterType,
+    listings = listings,
     getSearch = getSearch,
     parseNovel = parseNovel,
     getChapters = getChapters,
+    getPassage = getPassage,
     getPassageData = getPassageData
 }
