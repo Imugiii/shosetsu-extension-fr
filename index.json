@@ -12,7 +12,8 @@
         "imageURL": "https://www.chireads.com/wp-content/uploads/2020/05/cropped-logo-chireads-192x192.png",
         "id": 10001,
         "lang": "fr",
-        "version": "1.0.0",
+        "ver": "1.0.0",
+        "libVer": "1.0.0",
         "md5": ""
       },
       {
@@ -21,7 +22,8 @@
         "imageURL": "https://j-garden.fr/wp-content/uploads/2021/01/cropped-logo-jg-32x32.png",
         "id": 10002,
         "lang": "fr",
-        "version": "1.0.0",
+        "ver": "1.0.0",
+        "libVer": "1.0.0",
         "md5": ""
       },
       {
@@ -30,7 +32,8 @@
         "imageURL": "https://www.baka-tsuki.org/project/logo.png",
         "id": 10003,
         "lang": "fr",
-        "version": "1.0.0",
+        "ver": "1.0.0",
+        "libVer": "1.0.0",
         "md5": ""
       },
       {
@@ -39,7 +42,8 @@
         "imageURL": "https://noveldeglace.com/favicon.ico",
         "id": 10004,
         "lang": "fr",
-        "version": "1.0.0",
+        "ver": "1.0.0",
+        "libVer": "1.0.0",
         "md5": ""
       }
     ],
