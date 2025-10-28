@@ -13,6 +13,20 @@ local settings = {
     chapterType = ChapterType.HTML
 }
 
+local function shrinkURL(url, type)
+    return url:gsub("^.-baka%-tsuki%.org", "")
+end
+
+local function expandURL(url, type)
+    if url:sub(1, 1) == "/" then
+        return BASE_URL .. url
+    elseif url:find("^https?://") then
+        return url
+    else
+        return BASE_URL .. "/project/index.php" .. url
+    end
+end
+
 local function listings(data)
     local url = BASE_URL .. "/project/index.php?title=Catégorie:Français"
     
@@ -24,22 +38,18 @@ local function listings(data)
     for i = 0, items:size() - 1 do
         local link = items:get(i)
         local title = link:text()
+        local href = link:attr("href")
         
         local novel = Novel()
         novel:setTitle(title)
-        local href = link:attr("href")
-        if href:sub(1, 1) == "/" then
-            novel:setLink(BASE_URL .. href)
-        else
-            novel:setLink(BASE_URL .. "/project/index.php" .. href)
-        end
+        novel:setLink(shrinkURL(href, KEY_NOVEL_URL))
         novels[#novels + 1] = novel
     end
     
     return novels
 end
 
-local function getSearch(data)
+local function search(data)
     local query = data[QUERY] or ""
     local url = BASE_URL .. "/project/index.php?title=Catégorie:Français"
     
@@ -53,14 +63,10 @@ local function getSearch(data)
         local title = link:text()
         
         if query == "" or title:lower():find(query:lower()) then
+            local href = link:attr("href")
             local novel = Novel()
             novel:setTitle(title)
-            local href = link:attr("href")
-            if href:sub(1, 1) == "/" then
-                novel:setLink(BASE_URL .. href)
-            else
-                novel:setLink(BASE_URL .. "/project/index.php" .. href)
-            end
+            novel:setLink(shrinkURL(href, KEY_NOVEL_URL))
             novels[#novels + 1] = novel
         end
     end
@@ -68,7 +74,8 @@ local function getSearch(data)
     return novels
 end
 
-local function parseNovel(url)
+local function parseNovel(novelURL, loadChapters)
+    local url = expandURL(novelURL, KEY_NOVEL_URL)
     local doc = GETDocument(url)
     local novel = NovelInfo()
     
@@ -92,44 +99,39 @@ local function parseNovel(url)
         end
     end
     
+    if loadChapters then
+        local chapters = {}
+        local volumeElements = doc:select("h2, h3")
+        
+        for i = 0, volumeElements:size() - 1 do
+            local heading = volumeElements:get(i)
+            local nextSibling = heading:nextElementSibling()
+            
+            if nextSibling and nextSibling:tagName() == "ul" then
+                local links = nextSibling:select("li a")
+                
+                for j = 0, links:size() - 1 do
+                    local link = links:get(j)
+                    local href = link:attr("href")
+                    local chapter = NovelChapter()
+                    chapter:setTitle(link:text())
+                    chapter:setLink(shrinkURL(href, KEY_CHAPTER_URL))
+                    chapter:setOrder(#chapters)
+                    chapters[#chapters + 1] = chapter
+                end
+            end
+        end
+        
+        novel:setChapters(chapters)
+    end
+    
     novel:setStatus(NovelStatus.PUBLISHING)
     return novel
 end
 
-local function getChapters(url)
-    local doc = GETDocument(url)
-    local chapters = {}
-    
-    local volumeElements = doc:select("h2, h3")
-    
-    for i = 0, volumeElements:size() - 1 do
-        local heading = volumeElements:get(i)
-        local nextSibling = heading:nextElementSibling()
-        
-        if nextSibling and nextSibling:tagName() == "ul" then
-            local links = nextSibling:select("li a")
-            
-            for j = 0, links:size() - 1 do
-                local link = links:get(j)
-                local chapter = NovelChapter()
-                chapter:setTitle(link:text())
-                local href = link:attr("href")
-                if href:sub(1, 1) == "/" then
-                    chapter:setLink(BASE_URL .. href)
-                else
-                    chapter:setLink(BASE_URL .. "/project/index.php" .. href)
-                end
-                chapter:setOrder(#chapters)
-                chapters[#chapters + 1] = chapter
-            end
-        end
-    end
-    
-    return chapters
-end
-
 local function getPassage(chapterURL)
-    local doc = GETDocument(chapterURL)
+    local url = expandURL(chapterURL, KEY_CHAPTER_URL)
+    local doc = GETDocument(url)
     local contentElement = doc:selectFirst("#mw-content-text")
     
     if contentElement then
@@ -144,10 +146,6 @@ local function getPassage(chapterURL)
     return ""
 end
 
-local function getPassageData(chapterURL)
-    return getPassage(chapterURL)
-end
-
 return {
     id = settings.id,
     name = settings.name,
@@ -156,10 +154,12 @@ return {
     lang = settings.lang,
     isSearchIncrementing = settings.isSearchIncrementing,
     chapterType = settings.chapterType,
-    listings = {listings},
-    getSearch = getSearch,
+    listings = {
+        Listing("Romans FR", false, listings)
+    },
+    search = search,
     parseNovel = parseNovel,
-    getChapters = getChapters,
     getPassage = getPassage,
-    getPassageData = getPassageData
+    shrinkURL = shrinkURL,
+    expandURL = expandURL
 }

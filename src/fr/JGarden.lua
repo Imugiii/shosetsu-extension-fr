@@ -13,8 +13,16 @@ local settings = {
     chapterType = ChapterType.HTML
 }
 
+local function shrinkURL(url, type)
+    return url:gsub("^.-j%-garden%.fr", "")
+end
+
+local function expandURL(url, type)
+    return BASE_URL .. url
+end
+
 local function listings(data)
-    local page = data[PAGE_INDEX] or 1
+    local page = data[PAGE] or 1
     local url = BASE_URL
     if page > 1 then
         url = BASE_URL .. "/page/" .. page
@@ -33,7 +41,7 @@ local function listings(data)
         if linkElement then
             local novel = Novel()
             novel:setTitle(linkElement:text())
-            novel:setLink(linkElement:attr("href"))
+            novel:setLink(shrinkURL(linkElement:attr("href"), KEY_NOVEL_URL))
             
             if imageElement then
                 novel:setImageURL(imageElement:attr("src"))
@@ -46,7 +54,7 @@ local function listings(data)
     return novels
 end
 
-local function getSearch(data)
+local function search(data)
     local query = data[QUERY] or ""
     local url = BASE_URL .. "/?s=" .. query:gsub(" ", "+")
     
@@ -63,7 +71,7 @@ local function getSearch(data)
         if linkElement then
             local novel = Novel()
             novel:setTitle(linkElement:text())
-            novel:setLink(linkElement:attr("href"))
+            novel:setLink(shrinkURL(linkElement:attr("href"), KEY_NOVEL_URL))
             
             if imageElement then
                 novel:setImageURL(imageElement:attr("src"))
@@ -76,7 +84,8 @@ local function getSearch(data)
     return novels
 end
 
-local function parseNovel(url)
+local function parseNovel(novelURL, loadChapters)
+    local url = expandURL(novelURL, KEY_NOVEL_URL)
     local doc = GETDocument(url)
     local novel = NovelInfo()
     
@@ -95,34 +104,33 @@ local function parseNovel(url)
         novel:setDescription(descElement:text())
     end
     
+    if loadChapters then
+        local chapters = {}
+        local linkElements = doc:select(".entry-content a")
+        
+        for i = 0, linkElements:size() - 1 do
+            local link = linkElements:get(i)
+            local text = link:text()
+            
+            if text:find("Chapitre") or text:find("Volume") or text:find("Prologue") or text:find("Épilogue") then
+                local chapter = NovelChapter()
+                chapter:setTitle(text)
+                chapter:setLink(shrinkURL(link:attr("href"), KEY_CHAPTER_URL))
+                chapter:setOrder(i)
+                chapters[#chapters + 1] = chapter
+            end
+        end
+        
+        novel:setChapters(chapters)
+    end
+    
     novel:setStatus(NovelStatus.PUBLISHING)
     return novel
 end
 
-local function getChapters(url)
-    local doc = GETDocument(url)
-    local chapters = {}
-    
-    local linkElements = doc:select(".entry-content a")
-    
-    for i = 0, linkElements:size() - 1 do
-        local link = linkElements:get(i)
-        local text = link:text()
-        
-        if text:find("Chapitre") or text:find("Volume") or text:find("Prologue") or text:find("Épilogue") then
-            local chapter = NovelChapter()
-            chapter:setTitle(text)
-            chapter:setLink(link:attr("href"))
-            chapter:setOrder(i)
-            chapters[#chapters + 1] = chapter
-        end
-    end
-    
-    return chapters
-end
-
 local function getPassage(chapterURL)
-    local doc = GETDocument(chapterURL)
+    local url = expandURL(chapterURL, KEY_CHAPTER_URL)
+    local doc = GETDocument(url)
     local contentElement = doc:selectFirst(".entry-content")
     
     if contentElement then
@@ -130,10 +138,6 @@ local function getPassage(chapterURL)
     end
     
     return ""
-end
-
-local function getPassageData(chapterURL)
-    return getPassage(chapterURL)
 end
 
 return {
@@ -144,10 +148,12 @@ return {
     lang = settings.lang,
     isSearchIncrementing = settings.isSearchIncrementing,
     chapterType = settings.chapterType,
-    listings = {listings},
-    getSearch = getSearch,
+    listings = {
+        Listing("Romans", true, listings)
+    },
+    search = search,
     parseNovel = parseNovel,
-    getChapters = getChapters,
     getPassage = getPassage,
-    getPassageData = getPassageData
+    shrinkURL = shrinkURL,
+    expandURL = expandURL
 }
