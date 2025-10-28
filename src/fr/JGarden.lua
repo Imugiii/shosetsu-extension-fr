@@ -13,7 +13,7 @@ local settings = {
     chapterType = ChapterType.HTML
 }
 
-function getSearch(data)
+local function getSearch(data)
     local query = data[QUERY] or ""
     local url = BASE_URL .. "/?s=" .. query:gsub(" ", "+")
     
@@ -43,7 +43,7 @@ function getSearch(data)
     return novels
 end
 
-function parseNovel(url)
+local function parseNovel(url)
     local doc = GETDocument(url)
     local novel = NovelInfo()
     
@@ -66,7 +66,7 @@ function parseNovel(url)
     return novel
 end
 
-function getPassage(url)
+local function getPassage(url)
     local doc = GETDocument(url)
     local chapters = {}
     
@@ -88,7 +88,7 @@ function getPassage(url)
     return chapters
 end
 
-function getPassageData(chapterURL)
+local function getPassageData(chapterURL)
     local doc = GETDocument(chapterURL)
     local contentElement = doc:selectFirst(".entry-content")
     
@@ -99,4 +99,16 @@ function getPassageData(chapterURL)
     return ""
 end
 
-return settings
+return {
+    id = settings.id,
+    name = settings.name,
+    baseURL = settings.baseURL,
+    imageURL = settings.imageURL,
+    lang = settings.lang,
+    isSearchIncrementing = settings.isSearchIncrementing,
+    chapterType = settings.chapterType,
+    getSearch = getSearch,
+    parseNovel = parseNovel,
+    getPassage = getPassage,
+    getPassageData = getPassageData
+}

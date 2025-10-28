@@ -9,40 +9,40 @@
       {
         "name": "Chireads",
         "fileName": "Chireads",
-        "imageURL": "https://www.chireads.com/wp-content/uploads/2020/05/cropped-logo-chireads-192x192.png",
+        "imageURL": "https://www.chireads.com/wp-content/uploads/2020/05/logo-chireads.png",
         "id": 10001,
         "lang": "fr",
-        "ver": "1.0.0",
+        "ver": "1.0.1",
         "libVer": "1.0.0",
         "md5": ""
       },
       {
         "name": "J-Garden",
         "fileName": "JGarden",
-        "imageURL": "https://j-garden.fr/wp-content/uploads/2021/01/cropped-logo-jg-32x32.png",
+        "imageURL": "https://j-garden.fr/wp-content/uploads/2021/01/logo-jg.png",
         "id": 10002,
         "lang": "fr",
-        "ver": "1.0.0",
+        "ver": "1.0.1",
         "libVer": "1.0.0",
         "md5": ""
       },
       {
         "name": "Baka-Tsuki FR",
         "fileName": "BakaTsukiFR",
-        "imageURL": "https://www.baka-tsuki.org/project/logo.png",
+        "imageURL": "https://www.baka-tsuki.org/project/images/b/bc/Wiki.png",
         "id": 10003,
         "lang": "fr",
-        "ver": "1.0.0",
+        "ver": "1.0.1",
         "libVer": "1.0.0",
         "md5": ""
       },
       {
         "name": "Novel de Glace",
         "fileName": "NovelDeGlace",
-        "imageURL": "https://noveldeglace.com/favicon.ico",
+        "imageURL": "https://raw.githubusercontent.com/Imugiii/shosetsu-extension-fr/main/assets/noveldeglace.png",
         "id": 10004,
         "lang": "fr",
-        "ver": "1.0.0",
+        "ver": "1.0.1",
         "libVer": "1.0.0",
         "md5": ""
       }
